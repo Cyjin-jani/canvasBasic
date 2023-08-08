@@ -13,12 +13,31 @@
         overflow: hidden;
       }
       canvas {
-        background-color: #f1f1f1;
+        /* background-color: #f1f1f1; */
+        /* filter: blur(50px) contrast(50); */
+        /* 배경색이 없다면 contrast가 발생하지 않는다 */
+        filter: url('#gooey');
       }
     </style>
   </head>
   <body>
     <canvas></canvas>
+    <!-- SVG filter gooey 효과 주기 -->
+    <!-- 다른 효과는 아래 링크 참고 -->
+    <!-- https://yoksel.github.io/svg-filters/#/ -->
+    <svg>
+      <defs>
+        <filter id="gooey">
+          <!-- stdDeviation: 가로의 blur, 세로의 blur 값 || result : blur1이라고 이름을 지어주는 것 -->
+          <feGaussianBlur stdDeviation="40" in="SourceGraphic" result="blur1" />
+          <feColorMatrix
+            in="blur1"
+            mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 100 -23"
+          />
+        </filter>
+      </defs>
+    </svg>
     <script type="module" src="./index.js"></script>
   </body>
 </html>
