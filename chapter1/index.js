@@ -1,10 +1,10 @@
 const canvas = document.querySelector('canvas');
 // canvas는 기본적으로 width 300, height 150으로 그려짐. (크기 조정 x인 경우에)
-console.log('🚀 ~ file: index.js:2 ~ canvas:', canvas);
+// console.log('🚀 ~ file: index.js:2 ~ canvas:', canvas);
 
 const ctx = canvas.getContext('2d');
-console.log('🚀 ~ file: index.js:5 ~ ctx:', ctx);
-console.log('dpr', window.devicePixelRatio);
+// console.log('🚀 ~ file: index.js:5 ~ ctx:', ctx);
+// console.log('dpr', window.devicePixelRatio);
 /**
  * device pixel ratio (DPR)
  * 하나의 css를 그릴때 해당 장치에 사용되는 pixel 수
@@ -15,19 +15,18 @@ console.log('dpr', window.devicePixelRatio);
  * dpr이 1이라면 1픽셀을 그리는 데에는 하나의 픽셀이면 된다.
  * 즉, dpr이 높을 수록 더욱 선명한 해상도가 된다.
  */
-
 const dpr = window.devicePixelRatio;
 
-const canvasWidth = innerWidth;
-const canvasHeight = innerHeight;
+// const canvasWidth = innerWidth;
+// const canvasHeight = innerHeight;
 // const canvasWidth = 300;
 // const canvasHeight = 300;
 
-canvas.style.width = canvasWidth + 'px';
-canvas.style.height = canvasHeight + 'px';
+// canvas.style.width = canvasWidth + 'px';
+// canvas.style.height = canvasHeight + 'px';
 
-canvas.width = canvasWidth * dpr;
-canvas.height = canvasHeight * dpr;
+// canvas.width = canvasWidth * dpr;
+// canvas.height = canvasHeight * dpr;
 // canvas와 css로 정의한 크기는 서로 다르다. 꼭 canvas 자체 width, height도 잘 설정해주어야 함.
 // canvas.width = 100;
 // canvas.height = 100;
@@ -39,7 +38,44 @@ canvas.height = canvasHeight * dpr;
  * 이렇게 구현되면, 같은 300 * 300의 크기로 보이지만 확대를 해도 해상도가 깨지지 않게 된다.
  *
  */
-ctx.scale(dpr, dpr);
+// ctx.scale(dpr, dpr);
+
+/**
+ * 08. resize 다루기 [start]
+ */
+let canvasWidth;
+let canvasHeight;
+let particles;
+
+function init() {
+  canvasWidth = innerWidth;
+  canvasHeight = innerHeight;
+
+  canvas.style.width = canvasWidth + 'px';
+  canvas.style.height = canvasHeight + 'px';
+
+  canvas.width = canvasWidth * dpr;
+  canvas.height = canvasHeight * dpr;
+  ctx.scale(dpr, dpr);
+
+  particles = [];
+  const TOTAL = canvasWidth / 80;
+
+  for (let i = 0; i < TOTAL; i++) {
+    // 0부터 각 캔버스 크기 사이에 랜덤한 x, y 값이 나오게 된다.
+    const x = randomNumBetween(0, canvasWidth);
+    const y = randomNumBetween(0, canvasHeight);
+    // 반지름 50~100 사이 랜덤한 사이즈의 공으로 만듦
+    const radius = randomNumBetween(50, 100);
+    const vy = randomNumBetween(1, 5);
+    const particle = new Particle(x, y, radius, vy);
+    particles.push(particle);
+  }
+}
+
+/**
+ * 08. resize 다루기 [end]
+ */
 
 /**
  * 07. dat GUI 활용해보기 [start]
@@ -135,24 +171,23 @@ class Particle {
  * 03.파티클 그리기 [end]
  */
 
-const TOTAL = 15;
+// const TOTAL = 15;
 const randomNumBetween = (min, max) => {
   return Math.random() * (max - min + 1) + min;
 };
 
-let particles = [];
+// let particles = [];
 
-for (let i = 0; i < TOTAL; i++) {
-  // 0부터 각 캔버스 크기 사이에 랜덤한 x, y 값이 나오게 된다.
-  const x = randomNumBetween(0, canvasWidth);
-  const y = randomNumBetween(0, canvasHeight);
-  // 반지름 50~100 사이 랜덤한 사이즈의 공으로 만듦
-  const radius = randomNumBetween(50, 100);
-  const vy = randomNumBetween(1, 5);
-  const particle = new Particle(x, y, radius, vy);
-  particles.push(particle);
-}
-console.log(particles);
+// for (let i = 0; i < TOTAL; i++) {
+//   // 0부터 각 캔버스 크기 사이에 랜덤한 x, y 값이 나오게 된다.
+//   const x = randomNumBetween(0, canvasWidth);
+//   const y = randomNumBetween(0, canvasHeight);
+//   // 반지름 50~100 사이 랜덤한 사이즈의 공으로 만듦
+//   const radius = randomNumBetween(50, 100);
+//   const vy = randomNumBetween(1, 5);
+//   const particle = new Particle(x, y, radius, vy);
+//   particles.push(particle);
+// }
 
 // particle.draw();
 // [03. 파티클 그리기 - end]
@@ -209,4 +244,18 @@ function animate() {
   then = now - (delta % interval);
 }
 
-animate();
+/**
+ * 08. resize 다루기 [start]
+ */
+window.addEventListener('load', () => {
+  init();
+  animate();
+});
+
+window.addEventListener('resize', () => {
+  init();
+});
+
+/**
+ * 08. resize 다루기 [end]
+ */
