@@ -7,5 +7,6 @@ export default class CanvasOption {
     this.interval = 1000 / this.fps;
     this.canvasWidth = innerWidth;
     this.canvasHeight = innerHeight;
+    this.bgColor = '#000000';
   }
 }

@@ -1,8 +1,12 @@
 import CanvasOption from './js/CanvasOption.js';
+import Particle from './js/Particle.js';
+import { randomNumBetween } from './js/utils.js';
 
 class Canvas extends CanvasOption {
   constructor() {
     super();
+
+    this.particles = [];
   }
   init() {
     this.canvasWidth = innerWidth;
@@ -13,6 +17,20 @@ class Canvas extends CanvasOption {
 
     this.canvas.style.width = this.canvasWidth + 'px';
     this.canvas.style.height = this.canvasHeight + 'px';
+
+    this.createParticles();
+  }
+
+  createParticles() {
+    const PARTICLE_NUM = 2000;
+    const x = randomNumBetween(0, this.canvasWidth);
+    const y = randomNumBetween(0, this.canvasHeight);
+
+    for (let index = 0; index < PARTICLE_NUM; index++) {
+      const vx = randomNumBetween(-5, 5);
+      const vy = randomNumBetween(-5, 5);
+      this.particles.push(new Particle(x, y, vx, vy));
+    }
   }
 
   render() {
@@ -25,7 +43,17 @@ class Canvas extends CanvasOption {
       delta = now - then;
       if (delta < this.interval) return;
 
-      this.ctx.fillRect(100, 100, 200, 200);
+      this.ctx.fillStyle = this.bgColor;
+      this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+      this.particles.forEach((particle, idx) => {
+        particle.update();
+        particle.draw();
+
+        if (particle.opacity < 0) {
+          this.particles.splice(idx, 1);
+        }
+      });
 
       then = now - (delta % this.interval);
     };
